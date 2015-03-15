@@ -1,16 +1,25 @@
 FROM quay.io/aptible/ubuntu:14.04
 
-RUN apt-get install -y couchdb curl
+ENV DATA_DIRECTORY /var/db
+RUN apt-get update && apt-get install -y couchdb curl && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/run/couchdb
 
-ADD templates/etc/couchdb /var/lib/couchdb
-RUN rm -f /etc/couchdb/local.ini && \
-    ln -s /var/lib/couchdb/local.ini /etc/couchdb/
+# This is a little bit convoluted.
+# The INI file needs to be persisted (in a volume) because it keeps track of
+# the "require auth" setting. It makes sense to set up a symlink here so that
+# couchdb will find the local.ini in the volume. If we added local.ini to the
+# volume directory here, and then bind-mounted the volume directory, the
+# data would get lost. Therefore, put the local.ini template file in /tmp
+# for now and copy it over to the volume as part of the initialization script.
+ADD templates/etc/couchdb/local.ini /tmp/couchdb/local.ini
+RUN ln -sf "$DATA_DIRECTORY"/local.ini /etc/couchdb
+
+ADD run-database.sh /usr/bin/
 
 ADD test /tmp/test
 RUN bats /tmp/test
 
-VOLUME ["/var/lib/couchdb"]
+VOLUME ["$DATA_DIRECTORY"]
 EXPOSE 5984
 
-CMD /usr/bin/couchdb
+ENTRYPOINT ["run-database.sh"]
