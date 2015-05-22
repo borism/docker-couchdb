@@ -1,7 +1,12 @@
 FROM quay.io/aptible/ubuntu:14.04
 
 ENV DATA_DIRECTORY /var/db
-RUN apt-get update && apt-get install -y couchdb curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y couchdb curl && \
+    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y python2.7 python-pip python-dateutil && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install couchdb
 RUN mkdir -p /var/run/couchdb
 
 # This is a little bit convoluted.
