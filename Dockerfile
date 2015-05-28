@@ -3,8 +3,11 @@ FROM quay.io/aptible/ubuntu:14.04
 ENV DATA_DIRECTORY /var/db
 RUN apt-get update && apt-get install -y couchdb curl && \
     rm -rf /var/lib/apt/lists/*
+
+# Note that python-couchdb is used for its `couchdb-dump` and `couchdb-load`
+# utilities.
 RUN apt-get update && \
-    apt-get install -y python2.7 python-pip python-dateutil && \
+    apt-get install -y python2.7 python-pip python-dateutil python-couchdb && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install couchdb
 RUN mkdir -p /var/run/couchdb
@@ -27,4 +30,5 @@ RUN bats /tmp/test
 VOLUME ["$DATA_DIRECTORY"]
 EXPOSE 5984
 
+ADD utilities.sh /usr/bin/
 ENTRYPOINT ["run-database.sh"]
