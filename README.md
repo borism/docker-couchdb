@@ -6,17 +6,14 @@ CouchDB on Docker.
 ## Installation and Usage
 
     docker pull quay.io/aptible/couchdb
-    docker run quay.io/aptible/couchdb
 
-## Advanced Usage
+This is an image conforming to the [Aptible database specification](https://support.aptible.com/topics/paas/deploy-custom-database/). To run a server for development purposes, execute
 
-### Creating a database user with password
+    docker create --name data quay.io/aptible/couchdb
+    docker run --volumes-from data -e USERNAME=aptible -e PASSPHRASE=pass -e DB=db quay.io/aptible/couchdb --initialize
+    docker run --volumes-from data -P quay.io/aptible/couchdb
 
-    docker run -v <host-mountpoint>/couchdb:/var/lib/couchdb quay.io/aptible/couchdb sh -c "couchdb -b && sleep 1 && curl -X PUT localhost:5984/_config/admins/aptible -d '\"password\"'"
-
-### Creating a database
-
-    docker run -v <host-mountpoint>/couchdb:/var/lib/couchdb quay.io/aptible/couchdb sh -c "couchdb -b && sleep 1 && curl -X PUT http://localhost:5984/db"
+The first command sets up a data container named `data` which will hold the configuration and data for the database. The second command creates a CouchDB instance with a username, passphrase and database name of your choice. The third command starts the database server.
 
 ## Available Tags
 
@@ -38,6 +35,6 @@ To push the Docker image to Quay, run the following command:
 
 MIT License, see [LICENSE](LICENSE.md) for details.
 
-Copyright (c) 2014 [Aptible](https://www.aptible.com) and contributors.
+Copyright (c) 2015 [Aptible](https://www.aptible.com) and contributors.
 
 [<img src="https://s.gravatar.com/avatar/f7790b867ae619ae0496460aa28c5861?s=60" style="border-radius: 50%;" alt="@fancyremarker" />](https://github.com/fancyremarker)
