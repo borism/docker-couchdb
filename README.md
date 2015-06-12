@@ -18,6 +18,7 @@ The first command sets up a data container named `data` which will hold the conf
 ## Available Tags
 
 * `latest`: Currently CouchDB 1.5.0
+* `1.5.0`: CouchDB 1.5.0
 
 ## Tests
 
