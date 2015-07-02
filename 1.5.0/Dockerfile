@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y couchdb curl && \
 RUN apt-get update && \
     apt-get install -y python2.7 python-pip python-dateutil python-couchdb && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install couchdb
 RUN pip install couchdb --upgrade
 RUN mkdir -p /var/run/couchdb
 
